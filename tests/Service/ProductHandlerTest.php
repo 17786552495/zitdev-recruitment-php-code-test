@@ -65,4 +65,31 @@ class ProductHandlerTest extends TestCase
 
         $this->assertEquals(143, $totalPrice);
     }
+
+    public function testSortGoods()
+    {
+        $newProducts = array();
+        $prices = array();
+
+        foreach ($this->products as $product) {
+            if ($product['type'] === "Dessert"){
+                $newProducts[] = $product;
+                $prices[] = $product['price'];
+            }
+        }
+
+        array_multisort($prices, SORT_DESC, $newProducts);
+        var_dump($newProducts);
+        return $newProducts;
+    }
+
+    public function testChangeUnixTime(): array
+    {
+
+        foreach ($this->products as &$product) {
+            $product['create_at'] = strtotime($product['create_at']);
+        }
+        var_dump($this->products);
+        return $this->products;
+    }
 }

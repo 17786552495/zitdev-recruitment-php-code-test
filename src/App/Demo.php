@@ -2,8 +2,10 @@
 namespace App\App;
 
 use App\Util\HttpRequest;
+use function PHPUnit\Framework\isNull;
+
 class Demo {
-    const URL = "http://some-api.com/user_info";
+    const URL = "http://some-api.com/user_info";  //127.0.0.1:10809
     private $_logger;
     private $_req;
     function __construct($logger, HttpRequest $req) {
@@ -19,6 +21,7 @@ class Demo {
     function get_user_info() {
         $result = $this->_req->get(self::URL);
         $result_arr = json_decode($result, true);
+        $result_arr = isNull($result_arr) ? [] : $result_arr;
         if (in_array('error', $result_arr) && $result_arr['error'] == 0) {
             if (in_array('data', $result_arr)) {
                 return $result_arr['data'];

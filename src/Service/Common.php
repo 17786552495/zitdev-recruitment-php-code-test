@@ -20,7 +20,7 @@ class Common
     {
 
         try {
-            $cackeKey = 'cache-address-'.$address;
+            $cackeKey = 'cache-address-'.$address;//中文
 
             // 從獲取座標
             $userLocation = redisx()->get($cackeKey);
@@ -39,9 +39,9 @@ class Common
 
             // 調用接口，以地址獲取座標
             $response = $geoHelper->convert_addresses($param);
-            $response = json_decode($response, true);
+            $response = json_decode($response, true);  //超时response为null
 
-            if ($response['error'] == 0) {
+            if ($response['error'] == 0) {  //判断也会成立 有问题
                 responseLog('Backend', 'phpgeohelper\\Geocoding->hksf_addresses', 'https://geo-helper-hostr.ks-it.co', '200', '0',  $response);
                 $data = $response['data'][0];
                 $coordinate = $data['coordinate'];
@@ -51,9 +51,9 @@ class Common
                     infoLog('geoHelper->hksf_addresses change failed === ' . $address);
                     if ($merchant_id) {
                         $sMerchant = new Merchant();
-                        $res = $sMerchant->get_merchant_address($merchant_id);
+                        $res = $sMerchant->get_merchant_address($merchant_id); //没有判断错误情况
                         $user_location = $res['latitude'] . ',' . $res['longitude'];
-                        return $user_location;
+                        return $user_location;  //缓存没加
                     }
                     infoLog('geoHelper->hksf_addresses change failed === merchant_id is null' . $merchant_id);
                     return false;
@@ -68,7 +68,7 @@ class Common
                 }
             }
             responseLog('Backend', 'phpgeohelper\\Geocoding->hksf_addresses', 'https://geo-helper-hostr.ks-it.co', '401', '401',  $response);
-            return false;
+            return false;  //  返回尽量统一
         } catch (\Throwable $t) {
             criticalLog('geoHelperAddress critical ==' . $t->getMessage());
             return 0;
@@ -76,6 +76,7 @@ class Common
     }
 
     // 回调状态过滤
+    // 默认值设置， 不合法status判断， status类型统一
     public static function checkStatusCallback($order_id, $status)
     {
         // 是900 可以回调
